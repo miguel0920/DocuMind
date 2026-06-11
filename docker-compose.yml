@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres-vector:
+    image: pgvector/pgvector:pg16 # Imagen oficial de Postgres con pgvector preinstalado
+    container_name: documind-vector-db
+    environment:
+      POSTGRES_USER: documind_user
+      POSTGRES_PASSWORD: DocuMindSecurePass2026!
+      POSTGRES_DB: documind_rag_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_vector_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_vector_data:
