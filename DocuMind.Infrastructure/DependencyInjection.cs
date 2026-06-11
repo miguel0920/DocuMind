@@ -22,6 +22,12 @@ public static class DependencyInjection
         // 2. Registro del Repositorio
         services.AddScoped<IDocumentRepository, DocumentRepository>();
 
+        string apiKey = configuration["EmbeddingSettings:ApiKey"] ?? throw new ArgumentNullException("API Key no configurada.");
+        string baseUrl = configuration["EmbeddingSettings:BaseUrl"] ?? "https://generativelanguage.googleapis.com/v1beta";
+        string embeddingModel = configuration["EmbeddingSettings:EmbeddingModel"] ?? "text-embedding-004";
+        string chatModel = configuration["EmbeddingSettings:ChatModel"] ?? "gemini-2.5-flash";
+        string providerName = configuration["EmbeddingSettings:Provider"] ?? "gemini";
+
         // 1. Registramos un HttpClient genérico para que lo compartan los servicios
         services.AddHttpClient();
 
@@ -31,15 +37,27 @@ public static class DependencyInjection
             var httpClient = provider.GetRequiredService<HttpClient>();
 
             // Leemos las variables del appsettings.json
-            string providerName = configuration["EmbeddingSettings:Provider"] ?? "Gemini";
-            string apiKey = configuration["EmbeddingSettings:ApiKey"] ?? string.Empty;
+            string fullUrl = $"{baseUrl}/models/{embeddingModel}:embedContent?key={apiKey}";
 
             // Evaluamos cuál servicio entregar según la configuración
             return providerName.ToLower() switch
             {
-                "gemini" => new GeminiEmbeddingService(httpClient, apiKey),
-                "openai" => new OpenAIEmbeddingService(httpClient, apiKey),
+                "gemini" => new GeminiEmbeddingService(httpClient, fullUrl),
+                "openai" => new OpenAIEmbeddingService(httpClient, fullUrl),
                 _ => throw new NotImplementedException($"El proveedor de IA '{providerName}' no está soportado.")
+            };
+        });
+
+        services.AddScoped<IChatService>(provider =>
+        {
+            var httpClient = provider.GetRequiredService<HttpClient>();
+
+            string fullUrl = $"{baseUrl}/models/{chatModel}:generateContent?key={apiKey}";
+            return providerName.ToLower() switch
+            {
+                "gemini" => new GeminiChatService(httpClient, fullUrl),
+                // En el futuro: "openai" => new OpenAIChatService(httpClient, apiKey),
+                _ => throw new NotImplementedException($"El proveedor de Chat '{providerName}' no está soportado.")
             };
         });
 

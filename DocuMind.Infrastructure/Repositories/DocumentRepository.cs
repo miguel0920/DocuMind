@@ -4,7 +4,6 @@ using DocuMind.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Pgvector;
 using Pgvector.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace DocuMind.Infrastructure.Repositories;
 

@@ -2,16 +2,10 @@
 
 namespace DocuMind.Infrastructure.Services.Embeddings;
 
-public class OpenAIEmbeddingService : IEmbeddingService
+public class OpenAIEmbeddingService(HttpClient httpClient, string url) : IEmbeddingService
 {
-    private readonly HttpClient _httpClient;
-    private readonly string _apiKey;
-
-    public OpenAIEmbeddingService(HttpClient httpClient, string apiKey)
-    {
-        _httpClient = httpClient;
-        _apiKey = apiKey;
-    }
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly string _url = url;
 
     public async Task<float[]> GenerateEmbeddingAsync(string text, CancellationToken cancellationToken = default)
     {
