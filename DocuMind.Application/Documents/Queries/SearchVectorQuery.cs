@@ -21,7 +21,7 @@ public class SearchVectorQueryHandler(IEmbeddingService embeddingService,
         float[] queryEmbeddingResult = await embeddingService.GenerateEmbeddingAsync(request.QueryText, cancellationToken);
         var queryVector = new Vector(queryEmbeddingResult);
 
-        var similarChunks = await documentRepository.SearchSimilarChunksAsync(queryVector, request.Limit, cancellationToken);
+        var similarChunks = await documentRepository.SearchHybridAsync(queryVector, request.QueryText, request.Limit, cancellationToken);
 
         if (!similarChunks.Any())
             return "No se encontró información relevante en los documentos guardados.";
