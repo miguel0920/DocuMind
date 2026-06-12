@@ -25,6 +25,10 @@ public class DocuMindDbContext(DbContextOptions<DocuMindDbContext> options) : Db
             // text-embedding-004 de Gemini devuelve vectores de 768 dimensiones.
             entity.Property(e => e.Embedding)
                 .HasColumnType("vector(768)");
+
+            entity.HasGeneratedTsVectorColumn(e => e.SearchVector, "spanish", e => new { e.DocumentName, e.Content }) // Columnas que se van a indexar
+                .HasIndex(e => e.SearchVector)
+                .HasMethod("GIN");
         });
     }
 }

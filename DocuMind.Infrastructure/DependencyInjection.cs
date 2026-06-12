@@ -27,6 +27,7 @@ public static class DependencyInjection
         string embeddingModel = configuration["EmbeddingSettings:EmbeddingModel"] ?? "text-embedding-004";
         string chatModel = configuration["EmbeddingSettings:ChatModel"] ?? "gemini-2.5-flash";
         string providerName = configuration["EmbeddingSettings:Provider"] ?? "gemini";
+        string outputDimensionality = configuration["EmbeddingSettings:OutputDimensionality"] ?? "768";
 
         // 1. Registramos un HttpClient genérico para que lo compartan los servicios
         services.AddHttpClient();
@@ -37,12 +38,15 @@ public static class DependencyInjection
             var httpClient = provider.GetRequiredService<HttpClient>();
 
             // Leemos las variables del appsettings.json
-            string fullUrl = $"{baseUrl}/models/{embeddingModel}:embedContent?key={apiKey}";
+            string fullUrl = $"{baseUrl}/models/{embeddingModel}:embedContent";
+
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("x-goog-api-key", apiKey);
 
             // Evaluamos cuál servicio entregar según la configuración
             return providerName.ToLower() switch
             {
-                "gemini" => new GeminiEmbeddingService(httpClient, fullUrl),
+                "gemini" => new GeminiEmbeddingService(httpClient, fullUrl, $"models/{embeddingModel}", outputDimensionality),
                 "openai" => new OpenAIEmbeddingService(httpClient, fullUrl),
                 _ => throw new NotImplementedException($"El proveedor de IA '{providerName}' no está soportado.")
             };
@@ -52,7 +56,11 @@ public static class DependencyInjection
         {
             var httpClient = provider.GetRequiredService<HttpClient>();
 
-            string fullUrl = $"{baseUrl}/models/{chatModel}:generateContent?key={apiKey}";
+            string fullUrl = $"{baseUrl}/models/{chatModel}:generateContent";
+
+            httpClient.DefaultRequestHeaders.Clear();
+            httpClient.DefaultRequestHeaders.Add("x-goog-api-key", apiKey);
+
             return providerName.ToLower() switch
             {
                 "gemini" => new GeminiChatService(httpClient, fullUrl),

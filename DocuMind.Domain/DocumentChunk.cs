@@ -1,4 +1,5 @@
-﻿using Pgvector;
+﻿using NpgsqlTypes;
+using Pgvector;
 
 namespace DocuMind.Domain
 {
@@ -9,8 +10,9 @@ namespace DocuMind.Domain
         public string Content { get; set; } = string.Empty;
         public int ChunkIndex { get; set; }
 
-        // Aquí se guardará el vector que nos devuelva Gemini (Array de floats)
         public Vector? Embedding { get; set; }
+
+        public NpgsqlTsVector? SearchVector { get; set; }
 
         public DocumentChunk()
         {
