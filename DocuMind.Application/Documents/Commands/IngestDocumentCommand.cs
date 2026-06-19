@@ -5,10 +5,8 @@ using MediatR;
 
 namespace DocuMind.Application.Documents.Commands;
 
-// 1. El Comando sigue recibiendo el nombre y contenido del documento
 public record IngestDocumentCommand(string DocumentName, string Content) : IRequest<bool>;
 
-// 2. El Manejador con la lógica de negocio actualizada
 public class IngestDocumentCommandHandler(ITextSplitterService splitterService,
                                           IEmbeddingService embeddingService,
                                           IDocumentRepository documentRepository) : IRequestHandler<IngestDocumentCommand, bool>
