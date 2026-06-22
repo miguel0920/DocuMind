@@ -40,6 +40,26 @@ public class DocumentsController(IMediator mediator) : ControllerBase
 
         return Ok(new { message = $"Documento '{request.DocumentName}' procesado, fragmentado y vectorizado con éxito." });
     }
+
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadPdf(IFormFile file, CancellationToken cancellationToken)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("No se envió ningún archivo.");
+
+        if (file.ContentType != "application/pdf" && !file.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("El sistema solo acepta archivos PDF.");
+
+        using var stream = file.OpenReadStream();
+        var command = new IngestPdfCommand(stream, file.FileName);
+
+        bool result = await _mediator.Send(command, cancellationToken);
+
+        if (!result)
+            return StatusCode(500, "Hubo un error extrayendo o procesando el contenido del PDF.");
+
+        return Ok(new { message = $"Documento '{file.FileName}' extraído, fragmentado y vectorizado con éxito." });
+    }
 }
 
 // Clase de utilidad para recibir el JSON del cliente

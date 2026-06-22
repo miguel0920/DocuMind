@@ -2,6 +2,7 @@
 using DocuMind.Application.Persistence;
 using DocuMind.Infrastructure.Persistence.Contexts;
 using DocuMind.Infrastructure.Repositories;
+using DocuMind.Infrastructure.Services;
 using DocuMind.Infrastructure.Services.Embeddings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -68,6 +69,8 @@ public static class DependencyInjection
                 _ => throw new NotImplementedException($"El proveedor de Chat '{providerName}' no está soportado.")
             };
         });
+
+        services.AddScoped<IPdfExtractorService, PdfExtractorService>();
 
         return services;
     }
