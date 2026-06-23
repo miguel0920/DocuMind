@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="DocuMind.Application/DocuMind.Application.csproj" />
+  <Project Path="DocuMind.Client/DocuMind.Client.Client/DocuMind.Client.Client.csproj" Id="23886a6d-ed0c-4871-b64e-3574e8cbc1db" />
+  <Project Path="DocuMind.Client/DocuMind.Client/DocuMind.Client.csproj" Id="7c23dd62-8f20-4129-a53d-0875899b366f" />
   <Project Path="DocuMind.Domain/DocuMind.Domain.csproj" />
   <Project Path="DocuMind.Infrastructure/DocuMind.Infrastructure.csproj" />
   <Project Path="DocuMind.WebApi/DocuMind.WebApi.csproj" />
